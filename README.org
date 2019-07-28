@@ -1,7 +1,5 @@
 #+TITLE: Word of Mouth
 
-* Introduction
-
 Word of mouth is a recommendation engine crawling reddit to find
 recommendations from the community that might interess you.
 
