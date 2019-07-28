@@ -1,0 +1,58 @@
+#+TITLE: Word of Mouth
+
+* Introduction
+
+Word of mouth is a recommendation engine crawling reddit to find
+recommendations from the community that might interess you.
+
+At the moment, the scope is to crawl the [[https://reddit.com/ifyoulikeblank][r/ifyoulikeblank]] to extract
+request for similar artist. Post will have a question like:
+
+#+begin_quote
+[IIL] Alt-J, Glass Animals, Florence + The Machine, [WEWIL?]
+#+end_quote
+
+Which should be read as /If I like Alt-J, Glass Animals and Florence +
+The Machine, what else will I like/. The
+community than answer with band or songs recommendations. You can see
+this thread for yourself [[https://www.reddit.com/r/ifyoulikeblank/comments/9tdu7c/iil_altj_glass_animals_florence_the_machine_wewil/][here]].
+
+This is a playground for me to explore:
+
+- Modern python development environment;
+- Crawler and dataset generation;
+- Semi-automatic label annotation;
+- Leveraging an external onthology of artists and songs;
+- Tagging and hopefully attention models;
+- Writing a reddit bot for the sake of it.
+
+* Setup
+
+We must first download [[https://nixos.org/][Ni]]x.  Once it is done, we can setup the build
+environment using the following command:
+
+#+begin_src sh
+nix-env -if build.nix
+#+end_src
+
+We are now dropped in an environment with all our dependencies
+installed. I will start with that for the first few iterations and
+revisit if we need to distribute this package.
+
+The first time this command is run, it will download the whole
+internet on your machine. It will be faster on the subsequent
+executions.
+
+* Tasks
+
+** IN-PROGRESS Set up a sane python environment
+
+I have looked around and decided to use this project as a pretext to
+learn more about [[https://nixos.org/][Nix]].
+** TODO Write a crawler to download all the posts for the subreddit
+** TODO Write a crawler to download all the comments
+
+Once the posts are downloaded, the next step is to download the
+comment thread associated to them.
+
+** TODO Write documentation on how to use this project
