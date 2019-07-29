@@ -43,10 +43,6 @@ executions.
 
 * Tasks
 
-** IN-PROGRESS Set up a sane python environment
-
-I have looked around and decided to use this project as a pretext to
-learn more about [[https://nixos.org/][Nix]].
 ** TODO Write a crawler to download all the posts for the subreddit
 ** TODO Write a crawler to download all the comments
 
@@ -54,3 +50,8 @@ Once the posts are downloaded, the next step is to download the
 comment thread associated to them.
 
 ** TODO Write documentation on how to use this project
+** TODO Download a list of all music artists and their track
+
+I will most likely start from wikidata and download a subset of it
+using the [[https://www.wikidata.org/wiki/Wikidata:Data_access#SPARQL_endpoints][Sparql end-point]]. Or maybe from musicbrainz ... still to
+investigate.

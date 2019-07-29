@@ -1,0 +1,194 @@
+#+TITLE: Crawling all submissions from a subreddit
+
+I am starting a new hobby project called [[https://github.com/apatry/word-of-mouth][word of mouth]] to recommend
+music groups based on suggestions from the [[https://reddit.com/r/ifyoulikeblank][r/ifyoulikeblank]] subreddit
+community. One of the first problem to solve is to download the
+submissions of the subreddit. This post goes over one possible
+option.
+
+There are three options when it come to crawling reddit:
+
+- Use reddit [[https://www.reddit.com/dev/api/][rest api]] directly or through a python client like
+  [[https://github.com/praw-dev/praw][praw]]. The main downside of this approach is that we are limited to
+  the top 100 submissions for each or our query. This makes it a no go
+  when we want to download the content of a whole subreddit.
+
+- Leverage [[https://www.reddit.com/r/pushshift/comments/bcxguf/new_to_pushshift_read_this_faq/][pushshift]] which offers [[https://files.pushshift.io/reddit/][data dumps]] of reddit and a [[https://github.com/pushshift/api][rest api]]
+  to slice and dice it. A popular python client for this api is
+  [[https://github.com/dmarx/psaw][psaw]]. The data dump is huge and we won't need most of it for our use
+  case since we only need the content of a single subreddit. The rest api
+  on top of it is an interesting option.
+
+- Use a third party crawler or write our own.
+
+Given that pushshift has done all the crawling and indexing work
+already, we will leverage their api. The pushshift api is simple enough
+that we will use it directly through python's [[https://2.python-requests.org//en/master/][requests]] library.
+
+* Exploring the pushshift api
+
+Let's get started with the pushshift api. It only takes a couple of
+lines of python code to get started:
+
+#+begin_src python :return submissions :session crawl
+import requests
+
+url = "https://api.pushshift.io/reddit/search/submission"
+params = {"subreddit": "ifyoulikeblank"}
+submissions = requests.get(url, params = params)
+#+end_src
+
+#+RESULTS:
+
+We get back a list of 25 submissions looking like this:
+
+#+begin_src python :results none
+{'all_awardings': [],
+ 'allow_live_comments': False,
+ 'author': 'pakoito',
+ 'author_flair_css_class': None,
+ 'author_flair_richtext': [],
+ 'author_flair_text': None,
+ 'author_flair_type': 'text',
+ 'author_fullname': 't2_556z4',
+ 'author_patreon_flair': False,
+ 'can_mod_post': False,
+ 'contest_mode': False,
+ 'created_utc': 1564336546,
+ 'domain': 'self.ifyoulikeblank',
+ 'full_link': 'https://www.reddit.com/r/ifyoulikeblank/comments/ciyzhv/iil_madeon_porter_robinson_mystery_skulls/',
+ 'gildings': {},
+ 'id': 'ciyzhv',
+ 'is_crosspostable': True,
+ 'is_meta': False,
+ 'is_original_content': False,
+ 'is_reddit_media_domain': False,
+ 'is_robot_indexable': True,
+ 'is_self': True,
+ 'is_video': False,
+ 'link_flair_background_color': '',
+ 'link_flair_richtext': [],
+ 'link_flair_text_color': 'dark',
+ 'link_flair_type': 'text',
+ 'locked': False,
+ 'media_only': False,
+ 'no_follow': True,
+ 'num_comments': 0,
+ 'num_crossposts': 0,
+ 'over_18': False,
+ 'parent_whitelist_status': 'all_ads',
+ 'permalink': '/r/ifyoulikeblank/comments/ciyzhv/iil_madeon_porter_robinson_mystery_skulls/',
+ 'pinned': False,
+ 'pwls': 6,
+ 'retrieved_on': 1564336548,
+ 'score': 1,
+ 'selftext': 'what other happy electronic music will I like?',
+ 'send_replies': True,
+ 'spoiler': False,
+ 'stickied': False,
+ 'subreddit': 'ifyoulikeblank',
+ 'subreddit_id': 't5_2sekf',
+ 'subreddit_subscribers': 150398,
+ 'subreddit_type': 'public',
+ 'thumbnail': 'self',
+ 'title': '[IIL] Madeon, Porter Robinson, Mystery Skulls',
+ 'total_awards_received': 0,
+ 'url': 'https://www.reddit.com/r/ifyoulikeblank/comments/ciyzhv/iil_madeon_porter_robinson_mystery_skulls/',
+ 'whitelist_status': 'all_ads',
+ 'wls': 6}
+#+end_src
+
+We didn't find any documentation for these fields, but their
+interpretation is straightforward.
+
+This query only gave us the 25 most recent posts, what we want is to
+download all the submissions in this subreddit. We need paging which is
+done via the =before= and =after= parameters. We will set the =before=
+parameter to the creation date of the last item that was fetched:
+
+#+begin_src python :results submissions :session crawl
+last_submission_time = submissions.json()["data"][-1]["created_utc"]
+params = {"subreddit" : "ifyoulikeblank", "before" : last_submission_time}
+submissions = requests.get(url, params = params)
+#+end_src
+
+We now know how to fetch a subreddit page by page.
+
+* Putting it all together
+
+If we put it all together, we can fetch all the submissions in a
+subreddit using the following =crawl_page= method:
+
+#+begin_src python :session crawl
+import requests
+import time
+
+url = "https://api.pushshift.io/reddit/search/submission"
+
+def crawl_page(subreddit: str, last_page = None):
+    """Crawl a page of results from a given subreddit.
+
+    :param subreddit: The subreddit to crawl.
+    :param last_page: The last downloaded page.
+
+    :return: A page or results.
+    """
+    params = {"subreddit": subreddit, "size": 500, "sort": "desc", "sort_type": "created_utc"}
+    if last_page is not None:
+        if len(last_page) > 0:
+            # resume from where we left at the last page
+            params["before"] = last_page[-1]["created_utc"]
+        else:
+            # the last page was empty, we are past the last page
+            return []
+    results = requests.get(url, params)
+    if not results.ok:
+        # something wrong happened
+        raise Exception("Server returned status code {}".format(results.status_code))
+    return results.json()["data"]
+#+end_src
+
+The main loop would look something like this, just be careful not to
+hammer pushshift api with a flood of requests:
+
+#+BEGIN_SRC python :session crawl
+  import time
+
+  def crawl_subreddit(subreddit, max_submissions = 2000):
+      """
+      Crawl submissions from a subreddit.
+
+      :param subreddit: The subreddit to crawl.
+      :param max_submissions: The maximum number of submissions to download.
+
+      :return: A list of submissions.
+      """
+      submissions = []
+      last_page = None
+      while last_page != [] and len(submissions) < max_submissions:
+          last_page = crawl_page(subreddit, last_page)
+          submissions += last_page
+          time.sleep(3)
+      return submissions[:max_submissions]
+#+END_SRC
+
+Crawling the latest submissions of a subreddit is just a matter of
+calling:
+
+#+BEGIN_SRC python :session crawl
+lastest_submissions = crawl_subreddit("ifyoulikeblank")
+#+END_SRC
+
+* Wrapping up
+
+I can't thank enough the pushshift folks for their work. Using their
+rest api to download reddit content was as easy as it could be. If you
+plan to download a complete subreddit like we intend to do, just be
+careful about the volume of data to expect. You can get an idea by
+running the following query:
+
+#+BEGIN_SRC python :session crawl
+requests.get(url, params = {"subreddit": "ifyoulikeblank", "size": 0, "aggs" : "subreddit"}).json()["aggs"]
+#+END_SRC
+
+For the r/ifyoulikeblank subreddit, we are looking at 105+K submissions.
