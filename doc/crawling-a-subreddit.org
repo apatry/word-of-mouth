@@ -1,3 +1,4 @@
+
 #+TITLE: Crawling all submissions from a subreddit
 
 I am starting a new hobby project called [[https://github.com/apatry/word-of-mouth][word of mouth]] to recommend
@@ -121,7 +122,6 @@ subreddit using the following =crawl_page= method:
 
 #+begin_src python :session crawl
 import requests
-import time
 
 url = "https://api.pushshift.io/reddit/search/submission"
 
