@@ -7,7 +7,7 @@ This crawler leverage the
 
 import requests
 import time
-import typing
+from typing import List, Dict
 
 # Pushshift end point serving submissions
 submissions_url = "https://api.pushshift.io/reddit/search/submission"
@@ -28,7 +28,7 @@ def crawl_page(subreddit: str, last_page=None, *, page_size: int = 500):
 
     params = {
         "subreddit": subreddit,
-        "size": page_size,
+        "size": str(page_size),
         "sort": "desc",
         "sort_type": "created_utc",
     }
@@ -56,7 +56,7 @@ def crawl_subreddit(subreddit: str, max_submissions: int = 2000, *, pause: int =
 
   :return: A list of submissions.
   """
-    submissions = []
+    submissions:List[Dict] = []
     last_page = None
 
     while last_page != [] and len(submissions) < max_submissions:

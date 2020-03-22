@@ -1,13 +1,14 @@
-""" A library to create a gazetteer from wikidata.
-"""
+""" A library to create a gazetteer from wikidata. """
 
 import io
 import requests
 
+from typing import TextIO
+
 SPARQL_URL = "https://query.wikidata.org/bigdata/namespace/wdq/sparql"
 
 
-def download_as_csv_file(query, fd):
+def download_as_csv_file(query: str, fd: TextIO) -> None:
     """Download the result of a Sparql query to Wikidata into a csv file.
 
   :param query: A Sparql query.
@@ -23,7 +24,7 @@ def download_as_csv_file(query, fd):
         fd.write(chunk)
 
 
-def download_bands_gazetteer(fd):
+def download_bands_gazetteer(fd: TextIO) -> None:
     """Download a gazetteer of music bands from Wikidata.
 
   The resulting gazetteer is a CSV file with two columns:
@@ -45,7 +46,7 @@ def download_bands_gazetteer(fd):
     download_as_csv_file(query, fd)
 
 
-def dowload_musicians_gazetteer(fd):
+def dowload_musicians_gazetteer(fd: TextIO) -> None:
     """Download a gazetteer of musicians from Wikidata.
 
   The resulting gazetteer is a CSV file with two columns:
