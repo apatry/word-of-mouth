@@ -1,21 +1,19 @@
 #+TITLE: Word of Mouth
 
-Word of mouth is a recommendation engine crawling reddit to find
-recommendations from the community that might interess you.
-
-At the moment, the scope is to crawl the [[https://reddit.com/ifyoulikeblank][r/ifyoulikeblank]] to extract
-request for similar artist. Post will have a question like:
+Word of mouth is menat to be a recommendation engine powered by social
+recommendations. The first milestone in this direction will be to
+parse recommendations on [[https://reddit.com/ifyoulikeblank][r/ifyoulikeblank]] similar to:
 
 #+begin_quote
 [IIL] Alt-J, Glass Animals, Florence + The Machine, [WEWIL?]
 #+end_quote
 
 Which should be read as /If I like Alt-J, Glass Animals and Florence +
-The Machine, what else will I like/. The
-community than answer with band or songs recommendations. You can see
-this thread for yourself [[https://www.reddit.com/r/ifyoulikeblank/comments/9tdu7c/iil_altj_glass_animals_florence_the_machine_wewil/][here]].
+The Machine, what else will I like/. The community than answer with
+band or songs recommendations. You can see this thread for yourself
+[[https://www.reddit.com/r/ifyoulikeblank/comments/9tdu7c/iil_altj_glass_animals_florence_the_machine_wewil/][here]].
 
-This is a playground for me to explore:
+This is my playground to explore:
 
 - Modern python development environment;
 - Crawler and dataset generation;
@@ -24,34 +22,15 @@ This is a playground for me to explore:
 - Tagging and hopefully attention models;
 - Writing a reddit bot for the sake of it.
 
-* Setup
+And now I just started a detour toward text generation to build a band
+name generator.
 
-We must first download [[https://nixos.org/][Ni]]x.  Once it is done, we can setup the build
-environment using the following command:
+* Reddit Crawler
 
-#+begin_src sh
-nix-env -if build.nix
-#+end_src
+You can look in =src/crawler.py= to see how to crawl a subreddit using
+the pushshift api (more details in this [[https://www.textjuicer.com/2019/07/crawling-all-submissions-from-a-subreddit/][post]].
 
-We are now dropped in an environment with all our dependencies
-installed. I will start with that for the first few iterations and
-revisit if we need to distribute this package.
+* Dataset Generation from Wikidata
 
-The first time this command is run, it will download the whole
-internet on your machine. It will be faster on the subsequent
-executions.
-
-* Tasks
-
-** TODO Write a crawler to download all the posts for the subreddit
-** TODO Write a crawler to download all the comments
-
-Once the posts are downloaded, the next step is to download the
-comment thread associated to them.
-
-** TODO Write documentation on how to use this project
-** TODO Download a list of all music artists and their track
-
-I will most likely start from wikidata and download a subset of it
-using the [[https://www.wikidata.org/wiki/Wikidata:Data_access#SPARQL_endpoints][Sparql end-point]]. Or maybe from musicbrainz ... still to
-investigate.
+You can look in =src/gazetteer.py= to see how to generate datasets
+from wikidata (more details in this [[https://www.textjuicer.com/2019/08/building-a-gazetteer-of-music-bands-using-wikidata/][post]]).
