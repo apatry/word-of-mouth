@@ -32,10 +32,10 @@ the pushshift api (more details in this [[https://www.textjuicer.com/2019/07/cra
 
 * Dataset Generation from Wikidata
 
-You can look in =src/gazetteer.py= to see how to generate datasets
+You can look in =wordofmouth/gazetteer.py= to see how to generate datasets
 from wikidata (more details in this [[https://www.textjuicer.com/2019/08/building-a-gazetteer-of-music-bands-using-wikidata/][post]]).
 
 * Band Name Generator
 
-You can look in =src/bandnamegenerator.py= to see how to generate band
+You can look in =wordofmouth/bandaid.py= to see how to generate band
 names using a recurrent neural network (more details in this post).
