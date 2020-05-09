@@ -3,12 +3,12 @@
 import io
 import requests
 
-from typing import TextIO
+from typing import BinaryIO
 
 SPARQL_URL = "https://query.wikidata.org/bigdata/namespace/wdq/sparql"
 
 
-def download_as_csv_file(query: str, fd: TextIO) -> None:
+def download_as_csv_file(query: str, fd: BinaryIO) -> None:
     """Download the result of a Sparql query to Wikidata into a csv file.
 
   :param query: A Sparql query.
@@ -24,7 +24,7 @@ def download_as_csv_file(query: str, fd: TextIO) -> None:
         fd.write(chunk)
 
 
-def download_bands_gazetteer(fd: TextIO) -> None:
+def download_bands_gazetteer(fd: BinaryIO) -> None:
     """Download a gazetteer of music bands from Wikidata.
 
   The resulting gazetteer is a CSV file with two columns:
@@ -42,11 +42,11 @@ def download_bands_gazetteer(fd: TextIO) -> None:
       ?entity rdfs:label ?label.
       FILTER (LANG(?label) = 'en')
     }
-  """
+    """
     download_as_csv_file(query, fd)
 
 
-def dowload_musicians_gazetteer(fd: TextIO) -> None:
+def dowload_musicians_gazetteer(fd: BinaryIO) -> None:
     """Download a gazetteer of musicians from Wikidata.
 
   The resulting gazetteer is a CSV file with two columns:
@@ -66,5 +66,5 @@ def dowload_musicians_gazetteer(fd: TextIO) -> None:
       ?entity rdfs:label ?label.
       FILTER (LANG(?label) = 'en')
     }
-  """
+    """
     download_as_csv_file(query, fd)
