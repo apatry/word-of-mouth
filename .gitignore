@@ -1,2 +1,8 @@
 # ignore python binary files
 *.pyc
+
+# ignore mypy files
+.mypy_cache/
+
+# ignore virtual env files
+_env/
