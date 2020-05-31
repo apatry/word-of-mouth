@@ -39,6 +39,8 @@ def train(
     trainer_filepath: str,
     model_filepath: str,
     alphabet_filepath: str,
+    batch_size: int = 256,
+    epochs: int = 8,
 ) -> None:
     alphabet = Alphabet(bands)
 
@@ -49,7 +51,12 @@ def train(
         pickle.dump(alphabet, f)
 
     train_and_save(
-        trainer, alphabet, bands, model_filepath, batch_size=min(256, len(bands))
+        trainer,
+        alphabet,
+        bands,
+        model_filepath,
+        batch_size=min(batch_size, len(bands)),
+        epochs=epochs,
     )
 
 

@@ -9,8 +9,11 @@ python = "^3.8"
 tensorflow = "^2.2.0"
 requests = "^2.23.0"
 numpy = "^1.18.4"
+dagster = "^0.7.15"
 
 [tool.poetry.dev-dependencies]
+dagit = "^0.7.15"
+mypy = "^0.770"
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -37,5 +37,5 @@ from wikidata (more details in this [[https://www.textjuicer.com/2019/08/buildin
 
 * Band Name Generator
 
-You can look in =wordofmouth/bandaid.py= to see how to generate band
-names using a recurrent neural network (more details in this post).
+You can look in =wordofmouth/dagster/bandaid.py= to see how to generate band
+names using a recurrent neural network. More details in [[https://www.textjuicer.com/2020/05/bandaid-a-band-name-generator/][this post]].
