@@ -15,12 +15,7 @@ import pickle
 
 from typing import List
 from wordofmouth.nlg.alphabet import Alphabet
-from wordofmouth.nlg.models import (
-    GRUModelTrainer,
-    ModelTrainer,
-    generate_text,
-    train_and_save,
-)
+from wordofmouth.nlg.models import ModelTrainer, generate_text, train_and_save
 
 
 def create_dataset(filename: str) -> List[str]:
@@ -127,7 +122,7 @@ def format_bands_embeddings(
             t.write("\t".join(str(x) for x in embedding) + "\n")
 
         for path in paths:
-            embeddings = []
+            embeddings: List[List[float]] = []
             generate_text(
                 model.model,
                 model.alphabet,

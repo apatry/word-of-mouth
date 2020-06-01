@@ -4,7 +4,7 @@ from wordofmouth import bandaid
 from wordofmouth.nlg.models import GRUModelTrainer
 from wordofmouth.gazetteer import download_bands_gazetteer
 
-from dagster import (
+from dagster import (  # type: ignore
     lambda_solid,
     pipeline,
     solid,
