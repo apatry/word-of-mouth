@@ -6,7 +6,7 @@ authors = ["Alex Patry <alex@nlpfu.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-tensorflow = "^2.2.0"
+tensorflow = "^2.2.1"
 requests = "^2.23.0"
 numpy = "^1.18.4"
 dagster = "^0.7.15"
