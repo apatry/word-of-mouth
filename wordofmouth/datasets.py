@@ -1,8 +1,12 @@
-from typing import Optional
+from datetime import datetime
+from typing import Dict, Optional
 
-from peewee import chunked
-from wordofmouth.database import MusicBand
+from peewee import chunked  # type: ignore
+from wordofmouth.database import MusicBand, RedditPost
+from wordofmouth.etl.reddit import crawl_subreddit
 from wordofmouth.etl.sparql import query_wikidata
+
+_PEEWEE_CHUNK_SIZE = 512
 
 
 def etl_music_bands(db, *, chunk_size: int = 512, limit: Optional[int] = None) -> int:
@@ -32,7 +36,34 @@ def etl_music_bands(db, *, chunk_size: int = 512, limit: Optional[int] = None) -
 
     bands = query_wikidata(query)
     with db.atomic():
-        for batch in chunked(bands, chunk_size):
+        for batch in chunked(bands, _PEEWEE_CHUNK_SIZE):
             MusicBand.insert_many(batch).execute()
 
     return len(bands)
+
+
+def etl_reddit_posts(db, max_posts=2000, *, chunk_size=512) -> int:
+    """
+    ETL posts from r/ifyoulikeblank on reddit.
+
+    :param db: The database in which to ETL the posts.
+    :param max_posts: The maximum number of posts to ETL.
+
+    :return: The number of posts that were downloaded.
+    """
+    posts = [
+        {
+            "created_at": datetime.fromtimestamp(post["created_utc"]),
+            "permalink": post["permalink"],
+            "flair": post.get("link_flair_text", None),
+            "title": post["title"],
+            "selftext": post.get("selftext", None),
+        }
+        for post in crawl_subreddit("ifyoulikeblank", max_posts=max_posts)
+    ]
+
+    with db.atomic():
+        for batch in chunked(posts, _PEEWEE_CHUNK_SIZE):
+            RedditPost.insert_many(batch).execute()
+
+    return len(posts)
