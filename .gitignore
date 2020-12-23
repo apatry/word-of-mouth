@@ -1,5 +1,6 @@
 # ignore python binary files
 *.pyc
+__pycache__
 
 # ignore mypy files
 .mypy_cache/
