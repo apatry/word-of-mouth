@@ -2,7 +2,7 @@
 Everything that is needed to add or extract data from our database.
 """
 
-from peewee import CharField, DateTimeField, Model, SqliteDatabase  # type: ignore
+from peewee import CharField, DateTimeField, Model, SqliteDatabase
 
 # TODO this should be configured outside of this module. I will keep
 # it hardcoded until I have a better hold of how to use peewee as my
