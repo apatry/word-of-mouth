@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A collection of documents annotated with entites.
+
+A valid document looks something like this:
+
+<docs>
+  <doc id="https://example.com/1"><band id="Q16839267">Glass Animals</band> is an amazing band.</doc>
+  ...
+</docs>
+
+This schema is still an early attempt. Some things that should be revisited:
+
+- Ids are currently optional. I am not sure it is the best way to go.
+- We create one element per entity type (but share a common
+type). This makes the schema specific but high touch as we add new
+type of entities. Maybe we should have a generic type for all
+entities.
+
+One limitation of this schema is that entities can't partially overlap
+because of how xml works. Entities need to be parent, child or
+disjoint among each others. It shouldn't be an issue for gold dataset,
+it could be an issue for machine produced data where more than the
+best hypothesis is outputted.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	   targetNamespace="http://textjuicer.com/word-of-mouth/1.0"
+	   xmlns:wom="http://textjuicer.com/word-of-mouth/1.0"
+	   elementFormDefault="qualified">
+  <!-- A collection of documents. -->
+  <xs:element name="docs">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+	<xs:element ref="wom:doc"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- A single document (mix of text and entities). -->
+  <xs:element name="doc">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+	<xs:element name="band" type="wom:entity"/>
+	<!-- New entity types should be added here. -->
+      </xs:choice>
+      <xs:attribute ref="wom:id"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- An id that can be used to join the documents and annotations
+       with an external data source (e.g. a database row or an entry
+       in wikidata). -->
+  <xs:attribute name="id" type="xs:string"/>
+
+  <!-- An annotated entity. Note that it is defined as a type. Each
+       entity gets it's own tag name to make validation easier and
+       human editing more convivial.
+
+       I am unclear how it will scale as we add entities, but it is
+       the simples starting point.-->
+  <xs:complexType name="entity">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+	<xs:attribute ref="wom:id"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>
