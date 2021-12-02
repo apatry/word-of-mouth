@@ -1,6 +1,6 @@
 #+TITLE: Word of Mouth
 
-Word of mouth is menat to be a recommendation engine powered by social
+Word of mouth is meant to be a recommendation engine powered by social
 recommendations. The first milestone in this direction will be to
 parse recommendations on [[https://reddit.com/ifyoulikeblank][r/ifyoulikeblank]] similar to:
 
