@@ -8,7 +8,7 @@ authors = ["Alex Patry <alex@nlpfu.com>"]
 python = "^3.8"
 tensorflow = "^2.2.0"
 requests = "^2.23.0"
-numpy = "^1.18.4"
+numpy = "^1.22.0"
 dagster = "^0.7.15"
 spacy = "^2.3.5"
 
